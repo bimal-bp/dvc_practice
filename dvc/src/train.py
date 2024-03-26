@@ -21,8 +21,8 @@ def training(param_yaml_path):
     train = pd.read_csv(final_train_data_path)
     test = pd.read_csv(final_test_data_path)
 
-    y_train = train[target]
-    y_test = test[target]
+    y_train = np.ravel(train[target])  # Flattening the target variable
+    y_test = np.ravel(test[target])  
 
     X_train = train.drop(target, axis=1)
     X_test = test.drop(target, axis=1)

@@ -1,0 +1,55 @@
+stages:
+  data_split:
+    cmd: python dvc/src/data_split.py
+    deps:
+    - dvc/src/data_split.py
+    params:
+    - base.random_state
+    - data_source.local_path
+    - split.split_ratio
+    outs:
+    - data/split
+  data_processing:
+    cmd: python dvc/src/data_processing.py
+    deps:
+    - data/split
+    - dvc/src/data_processing.py
+    params:
+    - process.dir
+    - process.test_file
+    - process.train_file
+    - split.dir
+    - split.test_file
+    - split.train_file
+    outs:
+    - data/processed
+  train:
+    cmd: python dvc/src/train.py
+    deps:
+    - data/processed
+    - dvc/src/train.py
+    params:
+    - base.random_state
+    - base.target_col
+    - model_dir
+    - process.dir
+    - process.test_file
+    - process.train_file
+    - train.n_est
+    outs:
+    - model/model.pkl
+  evaluate:
+    cmd: python dvc/src/evaluation.py model/model.pkl dvc/data/processed
+    deps:
+    - data/processed
+    - dvc/src/evaluation.py
+    - model/model.pkl
+    outs:
+    - eval/importance.png
+    - eval/live/plots:
+        cache: false
+    - eval/prc:
+        cache: false
+    metrics:
+    - eval/live/metrics.json:
+        cache: false
