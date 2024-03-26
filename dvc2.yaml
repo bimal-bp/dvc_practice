@@ -1,0 +1,7 @@
+stages :
+  data_split:
+    cmd: python dvc/src/data_split.py
+    deps:
+      - params.yaml
+    outs:
+      - data/split
